@@ -33,7 +33,7 @@ def main(contract_address, destination_address, amount, sig_1, sig_2):
     wei = Web3.toWei(amount, 'ether')
 
     warn("Authorize Transaction Spending Output, probably in a browser window")
-    tx_hash = contract.transact({'from': w3.eth.accounts[0], 'gas': 1100000}).spend(destination_address, wei, parsed_sig_1[0], Web3.toBytes(hexstr=parsed_sig_1[1]), Web3.toBytes(hexstr=parsed_sig_1[2]), parsed_sig_2[0], Web3.toBytes(hexstr=parsed_sig_2[1]), Web3.toBytes(hexstr=parsed_sig_2[2]))
+    tx_hash = contract.transact({'from': w3.eth.accounts[0], 'gas': 1100000}).spend(destination_address, wei, "", parsed_sig_1[0], Web3.toBytes(hexstr=parsed_sig_1[1]), Web3.toBytes(hexstr=parsed_sig_1[2]), parsed_sig_2[0], Web3.toBytes(hexstr=parsed_sig_2[1]), Web3.toBytes(hexstr=parsed_sig_2[2]))
 
     print(tx_hash)
     

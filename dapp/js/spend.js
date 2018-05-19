@@ -205,8 +205,9 @@ function getMessageToSign(source, destination, amount, callback, errback) {
 			errback(contractError);
 		    } else {
 			contract.generateMessageToSign.call(
-			    destination, 
-			    ethToWei(parseFloat(amount)), 
+			    destination,
+			    ethToWei(parseFloat(amount)),
+			    "",
 			    function(messageError, message) {
 				if (messageError) {
 				    console.error(messageError);
@@ -402,8 +403,9 @@ function broadcastSpend(callback, errback) {
 			errback(contractErr);
 		    } else {
 			contract.spend.sendTransaction(
-			    destination, 
-			    amount, 
+			    destination,
+			    amount,
+			    "",
 			    sigs.v[0], sigs.r[0], sigs.s[0], 
 			    sigs.v[1], sigs.r[1], sigs.s[1], {
 				from: account,

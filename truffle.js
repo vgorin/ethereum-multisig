@@ -16,6 +16,14 @@ module.exports = {
 	    gas:        4600000
 	}
     },
+
+  solc: {
+    optimizer: {
+      enabled: true,
+      runs: 200 // default is 200, however for function execution the effect is noticeable up to 20000
+    },
+  },
+
     description: "A multisig Ethereum address with spending authorized by Trezors.",
     authors: [
 	"Destry Saul <destry@unchained-capital.com>",

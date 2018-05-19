@@ -195,7 +195,7 @@ Events
 The contract emits the following events:
 
 * `Funded(new_total_balance)`  -- whenever the contract receives a new deposit (topic: `0xc4c14883ae9fd8e26d5d59e3485ed29fd126d781d7e498a4ca5c54c8268e4936`)
-* `Spent(destination, amount)` -- whenever the contract is spent from (topic: `0xd3eec71143c45f28685b24760ea218d476917aa0ac0392a55e5304cef40bd2b6`)
+* `Spent(destination, amount, data)` -- whenever the contract is spent from (topic: `0xd3eec71143c45f28685b24760ea218d476917aa0ac0392a55e5304cef40bd2b6`)
 
 Command-Line Scripts
 --------------------

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.23;
 
 // A 2/3 multisig contract which is compatible with Trezor-signed messages.
 //
@@ -36,16 +36,16 @@ contract TrezorMultiSig2of3 {
   // Contract Versioning
   uint256 public unchainedMultisigVersionMajor = 1;
   uint256 public unchainedMultisigVersionMinor = 0;   
-  
+
   // An event sent when funds are received.
   event Funded(uint new_balance);
   
   // An event sent when a spend is triggered to the given address.
-  event Spent(address to, uint transfer);
+  event Spent(address to, uint transfer, bytes data);
 
   // Instantiate a new Trezor Multisig 2 of 3 contract owned by the
   // three given addresses
-  function TrezorMultiSig2of3(address owner1, address owner2, address owner3) public {
+  constructor(address owner1, address owner2, address owner3) public {
     address zeroAddress = 0x0;
     
     require(owner1 != zeroAddress);
@@ -63,36 +63,38 @@ contract TrezorMultiSig2of3 {
 
   // The fallback function for this contract.
   function() public payable {
-    Funded(this.balance);
+    emit Funded(address(this).balance);
   }
 
   // Generates the message to sign given the output destination address and amount.
   // includes this contract's address and a nonce for replay protection.
   // One option to  independently verify: https://leventozturk.com/engineering/sha3/ and select keccak
-  function generateMessageToSign(address destination, uint256 value) public constant returns (bytes32) {
+  function generateMessageToSign(address destination, uint256 value, bytes data) public constant returns (bytes32) {
     require(destination != address(this));
-    bytes32 message = keccak256(spendNonce, this, value, destination);
+    bytes32 message = keccak256(spendNonce, this, data, value, destination);
     return message;
   }
   
   // Send the given amount of ETH to the given destination using
   // the two triplets (v1, r1, s1) and (v2, r2, s2) as signatures.
   // s1 and s2 should be 0x00 or 0x01 corresponding to 0x1b and 0x1c respectively.
-  function spend(address destination, uint256 value, uint8 v1, bytes32 r1, bytes32 s1, uint8 v2, bytes32 r2, bytes32 s2) public {
+  function spend(address destination, uint256 value, bytes data,
+    uint8 v1, bytes32 r1, bytes32 s1, uint8 v2, bytes32 r2, bytes32 s2) public {
     // This require is handled by generateMessageToSign()
     // require(destination != address(this));
-    require(this.balance >= value);
-    require(_validSignature(destination, value, v1, r1, s1, v2, r2, s2));
+    require(address(this).balance >= value);
+    require(_validSignature(destination, value, data, v1, r1, s1, v2, r2, s2));
     spendNonce = spendNonce + 1;
-    destination.transfer(value);
-    Spent(destination, value);
+    require(destination.call.value(value)(data));
+    emit Spent(destination, value, data);
   }
 
   // Confirm that the two signature triplets (v1, r1, s1) and (v2, r2, s2)
   // both authorize a spend of this contract's funds to the given
   // destination address.
-  function _validSignature(address destination, uint256 value, uint8 v1, bytes32 r1, bytes32 s1, uint8 v2, bytes32 r2, bytes32 s2) private constant returns (bool) {
-    bytes32 message = _messageToRecover(destination, value);
+  function _validSignature(address destination, uint256 value, bytes data,
+    uint8 v1, bytes32 r1, bytes32 s1, uint8 v2, bytes32 r2, bytes32 s2) private constant returns (bool) {
+    bytes32 message = _messageToRecover(destination, value, data);
     address addr1   = ecrecover(message, v1+27, r1, s1);
     address addr2   = ecrecover(message, v2+27, r2, s2);
     require(_distinctOwners(addr1, addr2));
@@ -108,8 +110,8 @@ contract TrezorMultiSig2of3 {
   // The required Trezor signing prefix, the length of this
   // unsigned message, and the unsigned ascii message itself are
   // then concatenated and hashed with keccak256.
-  function _messageToRecover(address destination, uint256 value) private constant returns (bytes32) {
-    bytes32 hashedUnsignedMessage = generateMessageToSign(destination, value);
+  function _messageToRecover(address destination, uint256 value, bytes data) private constant returns (bytes32) {
+    bytes32 hashedUnsignedMessage = generateMessageToSign(destination, value, data);
     bytes memory unsignedMessageBytes = _hashToAscii(hashedUnsignedMessage);
     bytes memory prefix = "\x19Ethereum Signed Message:\n";
     return keccak256(prefix,bytes1(unsignedMessageBytes.length),unsignedMessageBytes);

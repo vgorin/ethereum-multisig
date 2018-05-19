@@ -5,7 +5,7 @@ function parseTrezorSignature(signature) {
 
 
 function signWithTrezor(path, contractAddress, destinationAddress, value) {
-    return contractAddress.generateMessageToSign(destinationAddress, value).then(function(message) {
+    return contractAddress.generateMessageToSign(destinationAddress, value, "").then(function(message) {
 	s = unescape(encodeURIComponent(message.split('0x')[1]));
 	var h = '';
         for (var i = 0; i < s.length; i++) {
