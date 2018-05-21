@@ -79,11 +79,17 @@ signature via a (preferably secure) side-channel such as email.</p>
       <form id="find-vault-form">
 	<div class="card-body">
 	  <div class="form-group">
-	    <label for="vault-address">Address</label>
+	    <label for="find-vault-address-input">Address</label>
 	    <input type="text" class="form-control form-control-sm" id="find-vault-address-input" aria-describedby="find-vault-address-input-help" placeholder="0xaaa..." required>
 	    <small id="find-vault-address-input-help" class="form-text text-muted">An address previously created by this application.</small>
 	    <p class="text-danger small"></p>
 	  </div>
+    <div class="form-group">
+      <label for="find-erc20-address-input">ERC20 Token Address</label>
+      <input type="text" class="form-control form-control-sm" id="find-erc20-address-input" aria-describedby="find-erc20-address-input-help" placeholder="0xaaa...">
+      <small id="find-erc20-address-input-help" class="form-text text-muted">ERC20 Token address to attach to. Leave zero or empty if not in use.</small>
+      <p class="text-danger small"></p>
+    </div>
    	  <button class="btn btn-primary" type="submit" disabled>
 	    <i class="fa fa-download"></i> &nbsp;
 	    Import
@@ -100,7 +106,7 @@ signature via a (preferably secure) side-channel such as email.</p>
 	  <div class="row">
 	    <div class="col-9">
 	      <div class="form-group">
-		<label for="vault-address">Vault Address</label>
+		<label for="author-spend-source-address-input">Vault Address</label>
 		<input type="text" class="form-control form-control-sm" id="author-spend-source-address-input" aria-describedby="author-spend-source-address-input-help" required readonly>
 		<small id="author-spend-source-address-input-help" class="form-text text-muted">The source address.</small>
 	      </div>
@@ -109,8 +115,13 @@ signature via a (preferably secure) side-channel such as email.</p>
 	      <p>Version <span class="spend-source-version"></span></p>
 	    </div>
 	  </div>
+    <div class="form-group">
+      <label for="author-spend-erc20-address-input">ERC20 Token Address</label>
+      <input type="text" class="form-control form-control-sm" id="author-spend-erc20-address-input" aria-describedby="author-spend-erc20-address-input-help" required readonly>
+      <small id="author-spend-erc20-address-input-help" class="form-text text-muted">The ERC20 token address. Left black or zero if transferring ETH.</small>
+    </div>
 	  <div class="form-group">
-	    <label for="spend-address">Destination Address</label>
+	    <label for="spend-destination-address-input">Destination Address</label>
 	    <input type="text" class="form-control form-control-sm destination-address-input" id="spend-destination-address-input" aria-describedby="spend-destination-address-input-help" placeholder="0xaaa..." required>
 	    <small id="spend-destination-address-input-help" class="form-text text-muted">The destination address.</small>
 	    <p class="text-danger small"></p>
@@ -118,7 +129,7 @@ signature via a (preferably secure) side-channel such as email.</p>
 	  <div class="row">
 	    <div class="col-9">
 	      <div class="form-group">
-		<label for="spend-amount">Spend Amount</label>
+		<label for="spend-amount-input">Spend Amount</label>
 		<div class="input-group">
 		  <input type="text" class="form-control form-control-sm" id="spend-amount-input" aria-describedby="spend-amount-input-help" required>
 		  <div class="input-group-append">
@@ -130,7 +141,7 @@ signature via a (preferably secure) side-channel such as email.</p>
 	      </div>
 	    </div>
 	    <div class="col-3">
-	      <p>Available Balance: <span class="spend-source-balance">0</span> ETH</p>
+	      <p>Available Balance: <span class="spend-source-balance">0</span> <span class="spend-source-symbol">ETH</span></p>
 	    </div>
 	  </div>
 	  <button class="btn btn-primary" type="submit" disabled>
@@ -159,13 +170,16 @@ signature via a (preferably secure) side-channel such as email.</p>
   <dd class="col-9"><span class="spend-source-version"></span></dd>
 
   <dt class="col-3">Available Balance</dt>
-  <dd class="col-9"><span class="spend-source-balance"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-source-balance"></span> <span class="spend-source-symbol">ETH</span></dd>
+
+  <dt class="col-3">ERC20 Token Address</dt>
+  <dd class="col-9"><code class="spend-erc20-address"></code></dd>
 
   <dt class="col-3">Destination</dt>
   <dd class="col-9"><code class="spend-destination-address"></code></dd>
 
   <dt class="col-3">Amount to Send</dt>
-  <dd class="col-9"><span class="spend-amount"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-amount"></span> <span class="spend-amount-symbol">ETH</span></dd>
 
 
 
@@ -219,13 +233,16 @@ signature via a (preferably secure) side-channel such as email.</p>
   <dd class="col-9"><span class="spend-source-version"></span></dd>
 
   <dt class="col-3">Available Balance</dt>
-  <dd class="col-9"><span class="spend-source-balance"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-source-balance"></span> <span class="spend-source-symbol">ETH</span></dd>
+
+  <dt class="col-3">ERC20 Token Address</dt>
+  <dd class="col-9"><code class="spend-erc20-address"></code></dd>
 
   <dt class="col-3">Destination</dt>
   <dd class="col-9"><code class="spend-destination-address"></code></dd>
 
   <dt class="col-3">Amount to Send</dt>
-  <dd class="col-9"><span class="spend-amount"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-amount"></span> <span class="spend-amount-symbol">ETH</span></dd>
 
 
 
@@ -259,13 +276,16 @@ signature via a (preferably secure) side-channel such as email.</p>
   <dd class="col-9"><span class="spend-source-version"></span></dd>
 
   <dt class="col-3">Available Balance</dt>
-  <dd class="col-9"><span class="spend-source-balance"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-source-balance"></span> <span class="spend-source-symbol">ETH</span></dd>
+
+  <dt class="col-3">ERC20 Token Address</dt>
+  <dd class="col-9"><code class="spend-erc20-address"></code></dd>
 
   <dt class="col-3">Destination</dt>
   <dd class="col-9"><code class="spend-destination-address"></code></dd>
 
   <dt class="col-3">Amount to Send</dt>
-  <dd class="col-9"><span class="spend-amount"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-amount"></span> <span class="spend-amount-symbol">ETH</span></dd>
 
 
   <dt class="col-3">TXID</dt>
@@ -289,13 +309,16 @@ signature via a (preferably secure) side-channel such as email.</p>
   <dd class="col-9"><span class="spend-source-version"></span></dd>
 
   <dt class="col-3">Available Balance</dt>
-  <dd class="col-9"><span class="spend-source-balance"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-source-balance"></span> <span class="spend-source-symbol">ETH</span></dd>
+
+  <dt class="col-3">ERC20 Token Address</dt>
+  <dd class="col-9"><code class="spend-erc20-address"></code></dd>
 
   <dt class="col-3">Destination</dt>
   <dd class="col-9"><code class="spend-destination-address"></code></dd>
 
   <dt class="col-3">Amount to Send</dt>
-  <dd class="col-9"><span class="spend-amount"></span> ETH</dd>
+  <dd class="col-9"><span class="spend-amount"></span> <span class="spend-amount-symbol">ETH</span></dd>
 
 
   <dt class="col-3">TXID</dt>
@@ -359,7 +382,7 @@ signature via a (preferably secure) side-channel such as email.</p>
 
       <form class="enter-signer-signature-form" novalidate>
 	<div class="form-group">
-	  <label for="signature-1-signature-input">Signature</label>
+	  <label for="signer-1-signature-input">Signature</label>
 	  <input type="text" class="form-control form-control-sm signature-input" id="signer-1-signature-input" aria-describedby="signer-1-signature-help" required>
 	  <small id="signer-1-signature-help" class="form-text text-muted">Genearted by another instance of this application.</small>
 	</div>
@@ -482,7 +505,7 @@ signature via a (preferably secure) side-channel such as email.</p>
 
       <form class="enter-signer-signature-form" novalidate>
 	<div class="form-group">
-	  <label for="signature-2-signature-input">Signature</label>
+	  <label for="signer-2-signature-input">Signature</label>
 	  <input type="text" class="form-control form-control-sm signature-input" id="signer-2-signature-input" aria-describedby="signer-2-signature-help" required>
 	  <small id="signer-2-signature-help" class="form-text text-muted">Genearted by another instance of this application.</small>
 	</div>

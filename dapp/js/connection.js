@@ -340,7 +340,8 @@ function setAccountBalance() {
     var container = $('#ethereum-account-balance');
     if (account) {
 	getAddressBalance(
-	    account, 
+	    account,
+      0,
 	    function (balance) {
 		container.html(formatFloat(balance, 8));
 	    },

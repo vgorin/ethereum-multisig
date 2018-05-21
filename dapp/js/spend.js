@@ -24,7 +24,7 @@ function enableFindVaultAddressInputFeedback() {
     });
 }
 
-function ensureAddressIsSpendableVault(address, callback, errback) {
+function ensureAddressIsSpendableVault(address, erc20Address, callback, errback) {
     connectionAlive(
 	function() {
 	    ensureAddressIsContract(
@@ -35,6 +35,7 @@ function ensureAddressIsSpendableVault(address, callback, errback) {
 			function(version) {
 			    getAddressBalance(
 				address,
+				erc20Address,
 				function(balance) {
 				    if (balance > 0) {
 					callback(version, balance);
@@ -107,13 +108,16 @@ function ensureContractVersionIsCompatible(address, callback, errback) {
 function enableFindVaultForm() {
     $("#find-vault-form").submit(function(event) {
 	event.preventDefault();
-	var address = $('#find-vault').find('input').val().toLowerCase();
+	var address = $('#find-vault-address-input').val().toLowerCase();
+	var erc20Address = $('#find-erc20-address-input').val().toLowerCase();
 	var errors  = $('#find-vault').find('.vault-address-errors')
 	errors.html('');
 	ensureAddressIsSpendableVault(
 	    address,
+      erc20Address,
 	    function(version, balance) {
 		$('#author-spend-source-address-input').val(address);
+		$('#author-spend-erc20-address-input').val(erc20Address);
 		$('.spend-source-address').html(address);
 		$('.spend-source-version').html(version);
 		$('.spend-source-balance').html(balance);
@@ -194,7 +198,7 @@ function enableAmountInputFeedback() {
     });
 }
 
-function getMessageToSign(source, destination, amount, callback, errback) {
+function getMessageToSign(source, erc20TokenAddr, destination, amount, callback, errback) {
     connectionAlive(
 	function() {
 	    WEB3.eth.contract(TrezorMultiSig2of3Compiled.abi).at(
@@ -205,6 +209,7 @@ function getMessageToSign(source, destination, amount, callback, errback) {
 			errback(contractError);
 		    } else {
 			contract.generateMessageToSign.call(
+			    erc20TokenAddr,
 			    destination, 
 			    ethToWei(parseFloat(amount)), 
 			    function(messageError, message) {
@@ -230,11 +235,12 @@ function enableAuthorSpendForm() {
     $("#author-spend-form").submit(function(event) {
 	event.preventDefault();
 	var source      = $('#author-spend-source-address-input').val();
+	var erc20_token = $('#author-spend-erc20-address-input').val();
 	var destination = $('#spend-destination-address-input').val();
 	var amount      = $('#spend-amount-input').val();
 	var balance     = $('#spend-source-address-balance').val();
 	getMessageToSign(
-	    source, destination, amount,
+	    source, erc20_token, destination, amount,
 	    function(message) {
 		$('#author-spend-errors').html('');
 		$('.spend-source-address').html(source);
@@ -388,6 +394,7 @@ var SPEND_GAS_LIMIT = 1000000;
 
 function broadcastSpend(callback, errback) {
     var source      = $('.spend-source-address').html();
+    var erc20_token = $('.spend-erc20-address').html();
     var destination = $('.spend-destination-address').html();
     var amount      = ethToWei(parseFloat($('.spend-amount').html()));
     var sigs        = currentSignatures();
@@ -402,6 +409,7 @@ function broadcastSpend(callback, errback) {
 			errback(contractErr);
 		    } else {
 			contract.spend.sendTransaction(
+			    erc20_token,
 			    destination, 
 			    amount, 
 			    sigs.v[0], sigs.r[0], sigs.s[0], 

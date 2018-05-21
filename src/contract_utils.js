@@ -4,8 +4,8 @@ function parseTrezorSignature(signature) {
 }
 
 
-function signWithTrezor(path, contractAddress, destinationAddress, value) {
-    return contractAddress.generateMessageToSign(destinationAddress, value).then(function(message) {
+function signWithTrezor(path, contractAddress, erc20TokenAddress, destinationAddress, value) {
+    return contractAddress.generateMessageToSign(erc20TokenAddress, destinationAddress, value).then(function(message) {
 	s = unescape(encodeURIComponent(message.split('0x')[1]));
 	var h = '';
         for (var i = 0; i < s.length; i++) {
@@ -22,7 +22,7 @@ function signWithTrezor(path, contractAddress, destinationAddress, value) {
     });
 }
 
-function messageToSign(contractAddress, destinationAddress) {
+function messageToSign(contractAddress, erc20TokenAddress, destinationAddress) {
 }
 
 function getEthereumAddresses(path) {

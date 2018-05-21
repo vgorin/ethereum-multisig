@@ -46,18 +46,23 @@ function validateAddress(address) {
     }
 }
 
-function getAddressBalance(address, callback, errback) {
+function getAddressBalance(address, erc20Address, callback, errback) {
     connectionAlive(
 	function() {
-	    WEB3.eth.getBalance(address.toLowerCase(), function(error, balance) {
-		if (error) { 
-		    console.error(error);
-		    errback(error);
-		}
-		else { 
-		    callback(weiToEther(balance));
-		}
-	    });
+	  if(erc20Address) {
+	    // TODO: implement ERC20 balance - ERC20.at(erc20Address).balanceOf(address)
+    }
+    else {
+      WEB3.eth.getBalance(address.toLowerCase(), function(error, balance) {
+        if (error) {
+          console.error(error);
+          errback(error);
+        }
+        else {
+          callback(weiToEther(balance));
+        }
+      });
+    }
 	},
 	function(message) { errback(message); }
     );

@@ -158,7 +158,7 @@ function enableCreateVaultForm() {
 		deployedContract = WEB3.eth.contract(TrezorMultiSig2of3Compiled.abi).new(addresses[0], addresses[1], addresses[2],{
 		    data: TrezorMultiSig2of3Compiled.bytecode,
 		    from: account,
-		    gas:  CREATE_GAS_LIMIT,
+		    // gas:  CREATE_GAS_LIMIT,
 		}, function(err, newContract) {
 		    if (err) {
 			// User rejected transaction or some other

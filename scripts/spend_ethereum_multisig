@@ -22,7 +22,7 @@ def parse_signature(signature):
     return [V, R, S]
 
 
-def main(contract_address, destination_address, amount, sig_1, sig_2):
+def main(contract_address, erc20_token_address, destination_address, amount, sig_1, sig_2):
     contract_json = json.load(open('./build/contracts/TrezorMultisig2of3.json'))
     w3 = Web3(HTTPProvider(LOCAL_NODE, request_kwargs={'timeout': 60}))
     contract = w3.eth.contract(address = contract_address, abi=contract_json['abi'])
@@ -33,12 +33,12 @@ def main(contract_address, destination_address, amount, sig_1, sig_2):
     wei = Web3.toWei(amount, 'ether')
 
     warn("Authorize Transaction Spending Output, probably in a browser window")
-    tx_hash = contract.transact({'from': w3.eth.accounts[0], 'gas': 1100000}).spend(destination_address, wei, parsed_sig_1[0], Web3.toBytes(hexstr=parsed_sig_1[1]), Web3.toBytes(hexstr=parsed_sig_1[2]), parsed_sig_2[0], Web3.toBytes(hexstr=parsed_sig_2[1]), Web3.toBytes(hexstr=parsed_sig_2[2]))
+    tx_hash = contract.transact({'from': w3.eth.accounts[0], 'gas': 1100000}).spend(erc20_token_address, destination_address, wei, parsed_sig_1[0], Web3.toBytes(hexstr=parsed_sig_1[1]), Web3.toBytes(hexstr=parsed_sig_1[2]), parsed_sig_2[0], Web3.toBytes(hexstr=parsed_sig_2[1]), Web3.toBytes(hexstr=parsed_sig_2[2]))
 
     print(tx_hash)
     
 
 if __name__ == '__main__':
     if (len(sys.argv) < 4):
-        sys.exit("USAGE: spend_ethereum_multisig CONTRACT_ADDRESS DESTINATION_ADDRESS AMOUNT(ETH) SIGNATURE_1 SIGNATURE_2")
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+        sys.exit("USAGE: spend_ethereum_multisig CONTRACT_ADDRESS ERC20_TOKEN_ADDRESS DESTINATION_ADDRESS AMOUNT(ETH) SIGNATURE_1 SIGNATURE_2")
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
